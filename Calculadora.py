@@ -14,7 +14,7 @@ class Função:
 
 
 class CalculadoraBasica(Função):
-    def executar(self):
+    def executar(self): # Implementa a interface gráfica, sobrescrevendo o método da classe base (se repete a cada classe)
         self.window = tk.Toplevel()
         self.window.title("Calculadora Básica")
         self.window.geometry("300x250")
@@ -107,7 +107,7 @@ class Conversor(Função):
             messagebox.showerror("Erro", f"Erro ao realizar conversão: {str(e)}")
 
 class raizQuadrada(Função):
-    def executar(self):
+    def executar(self): 
         self.window = tk.Toplevel()
         self.window.title("Cálculo de Raiz")
         self.window.geometry("300x200")
@@ -242,9 +242,9 @@ class MenuPrincipal:
         self.root.title("Calculadora by:Bryan Smith")
         self.root.geometry("300x300")  # Define o tamanho da janela
 
-        label = tk.Label(root, text="----------MENU----------", font=("Arial", 16))
+        label = tk.Label(root, text="----------MENU----------", font=("Arial", 16)) 
         label.pack(pady=10)
-
+        # Mostra as opções
         self.opcoes = [
             ("Calculadora Básica", CalculadoraBasica()),
             ("Conversor", Conversor()),
@@ -259,7 +259,7 @@ class MenuPrincipal:
         for nome, funcao in self.opcoes:
             botao = tk.Button(root, text=nome, command=funcao.executar)
             botao.pack(pady=5)
-
+# Inicializa o programa e exibe o menu principal
 if __name__ == "__main__":
     root = tk.Tk()
     app = MenuPrincipal(root)
