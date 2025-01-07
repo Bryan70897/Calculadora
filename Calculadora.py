@@ -1,16 +1,13 @@
-import os
+
 import sympy
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # Plota o grafico
 import numpy as np
-from math import log
-import tkinter as tk
-from tkinter import messagebox
+from math import log # Biblioteca para calcular o logaritmo
+import tkinter as tk # Biblioteca para a interface gráfica
+from tkinter import messagebox 
 
 
-def limpar_terminal():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
+# Classe base 
 class Função:
     def executar(self):
         raise NotImplementedError("Função inexistente.")
@@ -37,6 +34,7 @@ class CalculadoraBasica(Função):
 
         tk.Button(self.window, text="Calcular", command=self.calcular).pack(pady=10)
 
+    # Função que calcula as operações basicas
     def calcular(self):
         try:
             valor1 = float(self.valor1_entry.get())
@@ -81,7 +79,7 @@ class Conversor(Função):
         tk.OptionMenu(self.window, self.conversao_var, *opcoes).pack(pady=5)
 
         tk.Button(self.window, text="Converter", command=self.converter).pack(pady=10)
-
+    # Função para converter as medidas
     def converter(self):
         try:
             valor = float(self.valor_entry.get())
@@ -119,6 +117,7 @@ class raizQuadrada(Função):
         self.numero_entry.pack(pady=5)
 
         tk.Button(self.window, text="Calcular", command=self.calcular_raiz).pack(pady=10)
+        # Função para calcular raiz quadrada
     def calcular_raiz(self):
         try:
             base = float(self.numero_entry.get())
@@ -130,8 +129,7 @@ class raizQuadrada(Função):
             messagebox.showerror("Erro", "Insira um número válido")
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao cácular a raiz quadra: {str(e)}")        
-
-    
+   
 class Exponencial(Função):
     def executar(self):
         self.window = tk.Toplevel()
@@ -147,7 +145,7 @@ class Exponencial(Função):
         self.expoente_entry.pack(pady=5)
 
         tk.Button(self.window, text="Calcular", command=self.calcular_exponencial).pack(pady=10)
-
+# Função para realizar calculos exponenciais
     def calcular_exponencial(self):
         try:
             base = float(self.numero_entry.get())
@@ -160,6 +158,7 @@ class Exponencial(Função):
             messagebox.showerror("Erro", "Insira valores numéricos válidos.")
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao calcular o expoente: {str(e)}")
+            
 class Logaritmo(Função):
     def executar(self):
         self.window = tk.Toplevel()
@@ -175,12 +174,13 @@ class Logaritmo(Função):
         self.base_entry.pack(pady=5)
 
         tk.Button(self.window, text="Calcular", command=self.calcular_logaritmo).pack(pady=10)  
+        # Função para Calcular logaritmo
     def calcular_logaritmo(self):
         try:
             numero = float(self.numero_entry.get())
             base = self.base_entry.get()
 
-        #Calcular o logaritmo
+
             if base:
                 base = float(base)
                 resultado = log(numero, base)
@@ -208,7 +208,7 @@ class DesenharFunção(Função):
         self.intervalo_entry.pack(pady=5)
 
         tk.Button(self.window, text="Desenhar", command=self.desenhar).pack(pady=10)
-
+    # Função para desenhar as funções e plotar em um gráfico 
     def desenhar(self):
         try:
             funcao = self.funcao_entry.get()
@@ -235,7 +235,7 @@ class Sair:
     def executar(self):
         self.root.destroy()  
 
-
+# Menu principal 
 class MenuPrincipal:
     def __init__(self, root):
         self.root = root
