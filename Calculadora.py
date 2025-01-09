@@ -1,4 +1,3 @@
-
 import sympy
 import matplotlib.pyplot as plt # Plota o grafico
 import numpy as np
@@ -14,6 +13,9 @@ class Função:
 
 
 class CalculadoraBasica(Função):
+    def __init__(self, historico):
+        self.historico = historico
+
     def executar(self): # Implementa a interface gráfica, sobrescrevendo o método da classe base (se repete a cada classe)
         self.window = tk.Toplevel()
         self.window.title("Calculadora Básica")
@@ -54,7 +56,8 @@ class CalculadoraBasica(Função):
                     raise ZeroDivisionError("Divisão por zero não é permitida.")
             else:
                 raise ValueError("Operação inválida.")
-
+            
+            self.historico.adicionar(f"{valor1} {operacao} {valor2}", resultado)  # Adiciona ao histórico
             messagebox.showinfo("Resultado", f"{resultado:.2f}")
         except ValueError:
             messagebox.showerror("Erro", "insira valores numéricos válidos.")
@@ -63,7 +66,10 @@ class CalculadoraBasica(Função):
         except Exception as e:
             messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
 
-class Conversor(Função):
+class Conversor(Função): # Converte medidas
+    def __init__(self, historico):
+        self.historico = historico
+
     def executar(self):
         self.window = tk.Toplevel()
         self.window.title("Conversor de Unidades")
@@ -99,14 +105,18 @@ class Conversor(Função):
                 resultado = (valor - 32) * 5/9
             else:
                 raise ValueError("Conversão inválida.")
-
-            messagebox.showinfo("Resultado", f"{resultado}")
+            
+            self.historico.adicionar(f"{valor} para {tipo}", resultado)  # Adiciona ao histórico
+            messagebox.showinfo("Resultado", f"{resultado:.2f}")
         except ValueError:
             messagebox.showerror("Erro", "insira um valor numérico válido.")
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao realizar conversão: {str(e)}")
 
 class raizQuadrada(Função):
+    def __init__(self, historico):
+        self.historico = historico
+
     def executar(self): 
         self.window = tk.Toplevel()
         self.window.title("Cálculo de Raiz")
@@ -123,14 +133,18 @@ class raizQuadrada(Função):
             base = float(self.numero_entry.get())
 
             resultado =  base ** (1/2)
-
-            messagebox.showinfo("Resultado", f"A raiz quadrada de {base} é; {resultado}")
+            
+            self.historico.adicionar(f"Raiz Quadrada de {base}", resultado)  # Adiciona ao histórico
+            messagebox.showinfo("Resultado", f"{resultado:.2f}")
         except ValueError:
             messagebox.showerror("Erro", "Insira um número válido")
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao cácular a raiz quadra: {str(e)}")        
+            messagebox.showerror("Erro", f"Erro ao calcular a raiz quadra: {str(e)}")        
    
 class Exponencial(Função):
+    def __init__(self, historico):
+        self.historico = historico
+
     def executar(self):
         self.window = tk.Toplevel()
         self.window.title("Cálculo Exponencial")
@@ -145,21 +159,25 @@ class Exponencial(Função):
         self.expoente_entry.pack(pady=5)
 
         tk.Button(self.window, text="Calcular", command=self.calcular_exponencial).pack(pady=10)
-# Função para realizar calculos exponenciais
+    # Função para realizar calculos exponenciais
     def calcular_exponencial(self):
         try:
             base = float(self.numero_entry.get())
             expoente = float(self.expoente_entry.get())
 
             resultado = base ** expoente
-
-            messagebox.showinfo("Resultado", f"O resultado de {base} elevado a {expoente} é: {resultado}")
+            
+            self.historico.adicionar(f"{base} ^ {expoente}", resultado)  # Adiciona ao histórico
+            messagebox.showinfo("Resultado", f"{resultado:.2f}")
         except ValueError:
             messagebox.showerror("Erro", "Insira valores numéricos válidos.")
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao calcular o expoente: {str(e)}")
             
 class Logaritmo(Função):
+    def __init__(self, historico):
+        self.historico = historico
+
     def executar(self):
         self.window = tk.Toplevel()
         self.window.title("Cálculo de logaritmo")
@@ -187,6 +205,7 @@ class Logaritmo(Função):
             else:
                 resultado = log(numero)  
 
+            self.historico.adicionar(f"O Log de {numero} {base} ", resultado)  # Adiciona ao histórico
             messagebox.showinfo("Resultado", f"Logaritmo: {resultado:.5f}")
         except ValueError:
             messagebox.showerror("Erro", "Por favor, insira valores numéricos válidos.")
@@ -194,11 +213,14 @@ class Logaritmo(Função):
             messagebox.showerror("Erro", f"Erro ao calcular logaritmo: {str(e)}")      
 
 class DesenharFunção(Função):
+    def __init__(self, historico):
+        self.historico = historico
+
     def executar(self):
         self.window = tk.Toplevel()
         self.window.title("Desenhar Função")
         self.window.geometry("300x200")
-
+       
         tk.Label(self.window, text="Digite a função (ex: x**2, sin(x), cos(x)):").pack(pady=5)
         self.funcao_entry = tk.Entry(self.window)
         self.funcao_entry.pack(pady=5)
@@ -224,10 +246,35 @@ class DesenharFunção(Função):
             plt.legend()
             plt.grid(True)
             plt.show()
+
+            self.historico.adicionar(f"Gráfico de {funcao} no intervalo [{x_min}, {x_max}]", "Registrada")
+            
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao desenhar função: {str(e)}")
 
+class Historico(Função): # Armazena os calculos feitos na calculadora
+    def __init__(self):
+        self.registros = []  # Lista para armazenar o histórico
 
+    def adicionar(self, operacao, resultado):
+        # Formata e adiciona a operação ao histórico
+        self.registros.append(f"{operacao} = {resultado}")
+
+    def exibir(self):
+        # Cria uma janela para mostrar o histórico
+        window = tk.Toplevel()
+        window.title("Histórico")
+        window.geometry("300x400")
+        
+        tk.Label(window, text="Histórico de Operações", font=("Arial", 14)).pack(pady=10)
+        
+        # Exibe cada registro no histórico
+        for registro in self.registros:
+            tk.Label(window, text=registro).pack(anchor="w", padx=10)
+        
+        tk.Button(window, text="Fechar", command=window.destroy).pack(pady=10)
+    
+            
 
 class Sair:
     def __init__(self, root):
@@ -240,25 +287,29 @@ class MenuPrincipal:
     def __init__(self, root):
         self.root = root
         self.root.title("Calculadora by:Bryan Smith")
-        self.root.geometry("300x300")  # Define o tamanho da janela
-
+        self.root.geometry("300x500")  # Define o tamanho da janela
+        
+        self.historico = Historico()
+           
         label = tk.Label(root, text="----------MENU----------", font=("Arial", 16)) 
         label.pack(pady=10)
         # Mostra as opções
         self.opcoes = [
-            ("Calculadora Básica", CalculadoraBasica()),
-            ("Conversor", Conversor()),
-            ("Exponencial", Exponencial()),
-            ("Logaritmo", Logaritmo()),
-            ("Desenhar Função", DesenharFunção()),
-            ("Raiz Quadrada", raizQuadrada()),
+            ("Calculadora Básica", CalculadoraBasica(self.historico)),
+            ("Conversor", Conversor(self.historico)),
+            ("Exponencial", Exponencial(self.historico)),
+            ("Logaritmo", Logaritmo(self.historico)),
+            ("Desenhar Função", DesenharFunção(self.historico)),
+            ("Raiz Quadrada", raizQuadrada(self.historico)),
+            ("Historico", self.historico.exibir),
             ("Sair", Sair(root))
         ]
 
         #Criação dos botões
-        for nome, funcao in self.opcoes:
-            botao = tk.Button(root, text=nome, command=funcao.executar)
+        for nome, funcao in self.opcoes: # lambda implementado para adaptar a chamada das funções ou de um objeto
+            botao = tk.Button(root, text=nome, command=(lambda f=funcao: f() if callable(f) else f.executar()))
             botao.pack(pady=5)
+
 # Inicializa o programa e exibe o menu principal
 if __name__ == "__main__":
     root = tk.Tk()
